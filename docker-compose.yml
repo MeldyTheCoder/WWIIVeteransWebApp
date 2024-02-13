@@ -1,0 +1,39 @@
+services:
+  postgres_service:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      - POSTGRES_USER=kirill
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=main
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data/
+
+  backend_service:
+    build:
+      dockerfile: ./backend/Dockerfile
+      context: .
+    container_name: backend_container
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://kirill:1234@postgres_service:5432/main
+      - WAIT_HOSTS=postgres_service:5432
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=15
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    command: bash -c "/wait && python main.py"
+
+  react_app: 
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    container_name: frontend_container
+    volumes:
+      - ./ssl:/etc/nginx/ssl
+    environment:
+      - BACKEND_HOST=https://localhost:8080
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  postgres_volume:
