@@ -18,7 +18,6 @@ const wait = (ms: number) => {
     return new Promise( (resolve) => {setTimeout(resolve, ms)});
 }
 
-console.log(process.env.REACT_APP_BACKEND_HOST)
 
 class WWIIAPIBackend {
     private baseUrl = process.env.REACT_APP_BACKEND_HOST || 'http://backend_service:8080/'
