@@ -24,6 +24,8 @@ const PersonList = ({
         APIClass.getVeteransList()
         .then(
           (response) => {
+            console.log(response.data)
+            
             setFetchedPersons(response.data)
             if (persons?.length <= 0) {
               setPersons(response.data)
@@ -34,7 +36,7 @@ const PersonList = ({
         .catch(
             (error) => {
                 setLoading(false)
-                console.log(error)
+                console.log(error.toJSON())
             }
         )
       }

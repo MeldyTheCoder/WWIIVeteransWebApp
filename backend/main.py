@@ -61,5 +61,26 @@ async def create_veteran(
         return {'error': str(error)}
 
 
+@app.delete('/veterans/{veteran_id}/delete/')
+async def delete_veteran(veteran_id: int, response: fastapi.Response):
+    try:
+        data = sqlalchemy.Veteran.fetch_one(id=veteran_id)
+        if not data:
+            response.status_code = fastapi.status.HTTP_404_NOT_FOUND
+            return {'detail': 'Not found'}
+
+        sqlalchemy.Veteran.delete(id=veteran_id)
+        return pydantic.VeteranModel(**data.as_dict())
+
+    except pydantic.ValidationError as validation_error:
+        return validation_error.errors()
+
+    except Exception as error:
+        if settings.DEBUG:
+            raise error
+
+        return {'error': str(error)}
+
+
 if __name__ == '__main__':
     uvicorn.run(app, host=settings.HOST, port=settings.PORT)

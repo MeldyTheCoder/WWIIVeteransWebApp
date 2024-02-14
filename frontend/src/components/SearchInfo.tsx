@@ -16,7 +16,7 @@ const SearchInfo = ({
         <Collapse in={animated}>
             <div className='person-list_search-info'>
                 <Alert variant='danger'>
-                    Найдено по результатам запроса: <code>{searchQuery}</code>
+                    <b>Найдено по результатам запроса:</b> <span className='px-1'>{searchQuery}</span>
                 </Alert>
             </div>
         </Collapse>

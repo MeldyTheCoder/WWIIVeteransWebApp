@@ -38,54 +38,49 @@ const getMaxValue = (array?: any[]) => {
 const PersonFormSchema = yup.object({
     firstName: yup.string()
     .required("Поле имени ветерана обязательно для заполнения.")
-    .test(
-        'test-firstname-length',
-        'Длина имени должна быть не менее 2 символов.',
-        (value) => !!value && !nameIsInvalid(value)
-    )
+    .min(2, 'Длина имени должна быть не менее 2 символов.')
+    .max(100, "Длина имени должна быть не более 100 символов.")
     ,
-
+    
     lastName: yup.string()
     .required("Поле фамилии ветерана обязательно для заполнения.")
     .notOneOf(['Землеройка'], "Ты че долбоеб :)")
-    .test(
-        'test-lastname-length',
-        'Длина фамилии должна быть не менее 2 символов.',
-        (value) => !value || !nameIsInvalid(value)
-    )
+    .min(2, 'Длина фамилии должна быть не менее 2 символов.')
+    .max(100, "Длина фамилии должна быть не более 100 символов.")
     ,
 
     surname: yup.string()
-    .test(
-        'test-surname-length',
-        'Длина отчества должна быть не менее 2 символов.',
-        (value) => !value || !nameIsInvalid(value)
-    )
-    .nullable()
+    .notRequired()
+    .min(2, 'Длина отчетства должна быть не менее 2 символов.')
+    .max(100, "Длина отчества должна быть не более 100 символов.")
     ,
 
     description: yup.string()
     .required("Поле описания обязательно для заполнения.")
+    .min(10, 'Длина описания должна быть не менее 10 символов.')
+    .max(512, "Длина описания должна быть не более 512 символов.")
     ,
 
     quote: yup.string()
     .notRequired()
+    .min(5, 'Длина цитаты должна быть не менее 5 символов.')
+    .max(120, "Длина цитаты должна быть не более 120 символов.")
     ,
 
     photoUrl: yup.string()
+    .notRequired()
     .test(
         'test-valid',
         'Некорректная ссылка на изображение',
         (value) => (!value || !urlIsInvalid(value))
     )
-    .notRequired()
     ,
 
     yearsOfBattle: yup.array()
     .of(
         yup.number()
         .oneOf(
-            [1941, 1942, 1943, 1944, 1945],
+            [1939, 1940, 1941, 1942, 1943, 1944, 1945],
             "Неверные годы сражения."
         )
     )
@@ -94,6 +89,7 @@ const PersonFormSchema = yup.object({
 
     dateOfBirth: yup.date()
     .required("Поле даты рождения обязательно для заполнения.")
+    .min('1800-01-01', 'Минимальная дата рождения - 1 января 1800 года.')
     .max('1945-09-02', 'Дата рождения не может быть позже окончания войны.')
     .test({
         name: 'max_dateOfBirth',
@@ -102,16 +98,31 @@ const PersonFormSchema = yup.object({
             return !context.parent.yearsOfBattle || value <= new Date(`01-01-${getMinValue(context.parent.yearsOfBattle)}`)
         }
     })
+    .test({
+        name: 'dateOfBirth_more_than_dateOfDeath',
+        message: 'Ветеран родился позднее, чем умер.',
+        test: (value, context) => {
+            return !value || !context.parent.dateOfDeath || value <= context.parent.dateOfDeath
+        }
+    })
     ,
 
     dateOfDeath: yup.date()
     .notRequired()
+    .min('1800-01-01', 'Минимальная дата смерти - 1 января 1800 года.')
     .max(new Date(), "Дата смерти не может быть позднее текущей даты.")
     .test({
         name: 'min_dateOfDeath',
         message: 'Ветеран умер раньше своих годов сражения.',
         test: (value, context) => {
             return !context.parent.yearsOfBattle || !value || value >= new Date(`01-01-${getMaxValue(context.parent.yearsOfBattle)}`)
+        }
+    })
+    .test({
+        name: 'dateOfDeath_less_than_dateOfBirth',
+        message: 'Ветеран умер раньше, чем родился.',
+        test: (value, context) => {
+            return !value || !context.parent.dateOfBirth || value >= context.parent.dateOfBirth
         }
     })
 })

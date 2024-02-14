@@ -86,7 +86,7 @@ const PersonForm = ({
                     <Form.Group className='person-creation_description mb-2'>
                         <Form.Label>Описание подвигов</Form.Label>
                         <Form.Control 
-                            type="textarea" 
+                            as="textarea" 
                             name='description' 
                             value={values.description} 
                             onChange={handleChange}
@@ -134,6 +134,8 @@ const PersonForm = ({
                             isInvalid={touched.yearsOfBattle && !!errors.yearsOfBattle}
                             multiple
                         >
+                            <option value='1939'>1939</option>
+                            <option value='1940'>1940</option>
                             <option value='1941'>1941</option>
                             <option value='1942'>1942</option>
                             <option value='1943'>1943</option>

@@ -36,6 +36,19 @@ class WWIIAPIBackend {
         )
     }
 
+    async deleteVeteran(veteran_id: number, headers?: HeadersType): ResponseData<IPerson> {
+        const requestUrl: string = `veterans/${veteran_id}/delete/`
+        const requestMethod: RequestMethods = RequestMethods.DELETE
+        const requestHeaders: HeadersType = {...this.defaultHeaders, ...headers} || {}
+
+        return await this.makeRequest(
+            requestUrl, 
+            requestMethod,
+            {},
+            requestHeaders
+        )
+    }
+
     private async makeRequest<ResponseType>(url: string, method: RequestMethods, data?: DataType, headers?: HeadersType): ResponseData<ResponseType> {
         url = `${this.baseUrl}${url}`
 
@@ -47,7 +60,7 @@ class WWIIAPIBackend {
             timeout: 5000
         }
         
-        await wait(2000)
+        await wait(1000)
         return await axios(requestInitial)
     }
 }
