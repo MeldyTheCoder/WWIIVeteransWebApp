@@ -1,15 +1,11 @@
-import {useState} from 'react';
 import { MoonLoader } from 'react-spinners';
 import { Col, Row } from 'react-bootstrap';
+import ILoadingSpinnerProps from './types/ILoadingSpinner';
 
-
-interface ILoadingSpinner {
-    show?: boolean
-}
 
 const LoadingSpinner = ({
     show
-}: ILoadingSpinner) => {
+}: ILoadingSpinnerProps) => {
 
     if (show) {
         return (

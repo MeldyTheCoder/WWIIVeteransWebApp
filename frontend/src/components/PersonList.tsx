@@ -5,18 +5,14 @@ import PersonCard from './PersonCard';
 import ErrorBlock from './ErrorBlock';
 import WWIIAPIBackend from '../api/Api';
 import LoadingSpinner from './LoadingSpinner';
-
+import IPersonListProps from './types/IPersonList';
 
 const APIClass = new WWIIAPIBackend()
 
 
-interface IPersonList {
-    searchQuery?: string
-}
-
 const PersonList = ({
      searchQuery
-}: IPersonList
+}: IPersonListProps
 ) => {
     const [persons, setPersons] = useState<IPerson[]>([])
     const [fetchedPersons, setFetchedPersons] = useState<IPerson[]>([])

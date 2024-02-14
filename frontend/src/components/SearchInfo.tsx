@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Alert, Collapse } from 'react-bootstrap';
+import ISearchInfoProps from './types/ISearchInfo';
 
-
-interface ISearchInfoProps {
-    searchQuery?: string
-}
 
 const SearchInfo = ({
     searchQuery
