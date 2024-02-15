@@ -27,9 +27,7 @@ const PersonList = ({
             console.log(response.data)
             
             setFetchedPersons(response.data)
-            if (persons?.length <= 0) {
-              setPersons(response.data)
-            }
+            setPersons(response.data)
             setLoading(false)
           }
         )
@@ -59,7 +57,7 @@ const PersonList = ({
 
         setPersons(personsListResult)
     }
-
+    
     useEffect(
         () => fetchPersons(),
         []
@@ -76,7 +74,7 @@ const PersonList = ({
                 <Row>
                     {persons?.map(
                         (person: IPerson, index: number) => (
-                        <PersonCard {...person} key={index}/>
+                        <PersonCard {...person} key={index} onDelete={() => fetchPersons()}/>
                         )
                     )}
                 </Row>

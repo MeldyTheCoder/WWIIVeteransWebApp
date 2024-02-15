@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
-import { Col, Card, Fade, Modal, Badge, Stack } from 'react-bootstrap';
+import { Col, Card, Fade, Modal, Badge, Ratio, Button } from 'react-bootstrap';
 import IPersonCardProps from './types/IPersonCard';
-
+import WWIIAPIBackend from '../api/Api';
 import './styles/PersonCard.css'
 
 const months: string[] = [
@@ -23,7 +23,10 @@ function getMonthString(month: number): string {
     return months[month]
 } 
 
+const API = new WWIIAPIBackend()
+
 const PersonCard = ({
+    id,
     firstName,
     lastName,
     surname,
@@ -34,6 +37,7 @@ const PersonCard = ({
     dateOfDeath,
     photoUrl,
     onDelete,
+    onError,
     onEdit
 }: IPersonCardProps) => {
     const [animated, setAnimated] = useState<boolean>(false)
@@ -113,11 +117,13 @@ const PersonCard = ({
 
         return (
             <Card className='person-card_root text-white' bg='dark' onClick={() => setAsModal(true)}>
-                <Card.Img 
-                    variant="top" 
-                    src={photoUrl || 'https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg'} 
-                    className='person-card_photo'
-                />
+                <Ratio key={"1x1"} aspectRatio={"1x1"}>
+                    <Card.Img 
+                        variant="top" 
+                        src={photoUrl || 'https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg'} 
+                        className='person-card_photoRation'
+                    />
+                </Ratio>
 
                 <Card.Body>
                     <Card.Title>{getFullName()}</Card.Title>
@@ -161,11 +167,30 @@ const PersonCard = ({
         </Fade>
     )
     
+    const handleDelete = () => {
+        setAsModal(false)
+
+        if (!id) {
+            throw new Error('ID пользователя не указан.')
+        }
+
+        API.deleteVeteran(id)
+        .then(
+            (response) => onDelete?.()
+        )
+        .catch(
+            (error) => onError?.()
+        )
+    }
+
     const renderAsModal = () => (
         <Modal show={asModal} onHide={() => setAsModal(false)} className='person-block_modal'>
             <Modal.Body>
                 {renderContent(true)}
             </Modal.Body>
+            <Modal.Footer>
+                <Button variant='outline-danger' onClick={() => handleDelete()}>Удалить</Button>
+            </Modal.Footer>
         </Modal>
     )
     

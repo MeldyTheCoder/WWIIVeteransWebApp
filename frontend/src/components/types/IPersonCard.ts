@@ -2,6 +2,8 @@ import IPerson from "../../interfaces/IPerson"
 
 
 interface IPersonCardProps extends IPerson {
+    id?: number,
+    onError?: () => void
     onDelete?: () => void
     onEdit?: () => void
 }
