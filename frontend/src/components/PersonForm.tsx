@@ -3,7 +3,7 @@ import { Modal, Col, Form, Button } from 'react-bootstrap'
 import { Formik } from 'formik';
 import { PersonFormSchema } from '../interfaces/IPerson';
 import IPersonFormProps from './types/IPersonForm';
-import './styles/PersonForm.css';
+import './styles/PersonForm.less';
 
 
 function getRandomInt(max: number) {

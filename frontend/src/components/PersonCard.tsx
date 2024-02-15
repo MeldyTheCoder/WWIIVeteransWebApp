@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import { Col, Card, Fade, Modal, Badge, Ratio, Button } from 'react-bootstrap';
 import IPersonCardProps from './types/IPersonCard';
 import WWIIAPIBackend from '../api/Api';
-import './styles/PersonCard.css'
+import './styles/PersonCard.less'
 
 const months: string[] = [
     'января',

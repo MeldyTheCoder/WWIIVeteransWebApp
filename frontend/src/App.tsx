@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Container, Col, Form, Button, InputGroup, Alert, Fade } from 'react-bootstrap';
+import { useState } from 'react';
+import { Container, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import WWIIAPIBackend from './api/Api';
 import PersonList from './components/PersonList';
 import PersonForm from './components/PersonForm';
 import SearchInfo from './components/SearchInfo';
 import ErrorAlert from './components/ErrorAlert';
-import { wait } from './api/Types';
 
-import './components/styles/App.css';
+import './components/styles/App.less';
 
 
 const APIClass = new WWIIAPIBackend()

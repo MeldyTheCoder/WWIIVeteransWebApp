@@ -1,7 +1,7 @@
 import { MoonLoader } from 'react-spinners';
 import { Modal } from 'react-bootstrap';
 import ILoadingSpinnerProps from './types/ILoadingSpinner';
-import "./styles/LoadingSpinner.css";
+import "./styles/LoadingSpinner.less";
 
 
 const LoadingSpinner = ({
