@@ -1,11 +1,12 @@
 import {useState, useEffect} from 'react';
 import IPerson from '../interfaces/IPerson';
-import { Row } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import PersonCard from './PersonCard';
 import ErrorBlock from './ErrorBlock';
 import WWIIAPIBackend from '../api/Api';
 import LoadingSpinner from './LoadingSpinner';
 import IPersonListProps from './types/IPersonList';
+import Paginator from './Paginator';
 
 const APIClass = new WWIIAPIBackend()
 
@@ -15,6 +16,7 @@ const PersonList = ({
 }: IPersonListProps
 ) => {
     const [persons, setPersons] = useState<IPerson[]>([])
+    const [personsPaginated, setPersonsPaginated] = useState<IPerson[]>([])
     const [fetchedPersons, setFetchedPersons] = useState<IPerson[]>([])
     const [isLoading, setLoading] = useState<boolean>(true)
 
@@ -39,6 +41,10 @@ const PersonList = ({
         )
       }
     
+    const paginatePersons = (elements: any[], page: number) => {
+        setPersonsPaginated(elements)
+    }
+
     const handleSearchPersons = (query?: string): void => {
         if (!query) {
             setPersons(fetchedPersons)
@@ -70,19 +76,25 @@ const PersonList = ({
 
     return (
         <div className='person-list_root'>
-            {!isLoading && persons && 
+            {!isLoading && personsPaginated && 
+            <>
                 <Row>
-                    {persons?.map(
+                    {personsPaginated?.map(
                         (person: IPerson, index: number) => (
                         <PersonCard {...person} key={index} onDelete={() => fetchPersons()}/>
                         )
                     )}
                 </Row>
+                
+                <Col className='d-flex justify-content-center my-3'>
+                    <Paginator elements={persons} elementsPerPage={6} onPageChange={paginatePersons} resetKey={searchQuery}/>
+                </Col>
+            </>
             }
 
             <LoadingSpinner show={isLoading}/>
 
-            { !isLoading && persons?.length <= 0 && 
+            { !isLoading && (personsPaginated?.length <= 0 || persons?.length <= 0) && 
                 <ErrorBlock
                     title='Ничего не найдено!'
                     description='По Вашему запросу ничего не было найдено. Попробуйте ввести что-нибудь другое :)'

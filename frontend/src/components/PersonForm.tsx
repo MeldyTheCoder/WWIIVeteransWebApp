@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Modal, Col, Form, Button } from 'react-bootstrap'
+import { Modal, Col, Form, Button, Image, Collapse} from 'react-bootstrap'
 import { Formik } from 'formik';
 import { PersonFormSchema } from '../interfaces/IPerson';
 import IPersonFormProps from './types/IPersonForm';
 import './styles/PersonForm.less';
 
+
+const DEFAULT_PHOTO_URL = 'https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg'
 
 function getRandomInt(max: number) {
     return Math.floor(Math.random() * max);
@@ -18,6 +20,7 @@ const PersonForm = ({
     handleClose
 }: IPersonFormProps) => {
     const [submited, setSubmited] = useState<boolean>(false)
+    const [imagePreview, setImagePreview] = useState<boolean>(false)
 
     const renderContent = () => (
         <Formik
@@ -37,8 +40,8 @@ const PersonForm = ({
 
         >   
             {({ handleChange, handleSubmit, values, errors, touched }) => (
-                <Form onSubmit={handleSubmit} className='person-creation-form_root text-white py-2' noValidate>
-                    <Form.Group className='person-creation_firstName mb-2'>
+                <Form onSubmit={handleSubmit} className='person-form_root text-white py-2' noValidate>
+                    <Form.Group className='person-form_firstName mb-2'>
                         <Form.Label>Имя ветерана</Form.Label>
                         <Form.Control 
                             name='firstName' 
@@ -53,7 +56,7 @@ const PersonForm = ({
                         </Form.Control.Feedback>
                     </Form.Group>
                     
-                    <Form.Group className='person-creation_lastName mb-2'>
+                    <Form.Group className='person-form_lastName mb-2'>
                         <Form.Label>Фамилия ветерана</Form.Label>
                         <Form.Control 
                             name='lastName' 
@@ -68,7 +71,7 @@ const PersonForm = ({
                         </Form.Control.Feedback>
                     </Form.Group>
                     
-                    <Form.Group className='person-creation_surname mb-2'>
+                    <Form.Group className='person-form_surname mb-2'>
                         <Form.Label>Отчество ветерана</Form.Label>
                         <Form.Control 
                             name='surname' 
@@ -83,7 +86,7 @@ const PersonForm = ({
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Form.Group className='person-creation_description mb-2'>
+                    <Form.Group className='person-form_description mb-2'>
                         <Form.Label>Описание подвигов</Form.Label>
                         <Form.Control 
                             as="textarea" 
@@ -98,7 +101,7 @@ const PersonForm = ({
                         </Form.Control.Feedback>
                     </Form.Group>
                     
-                    <Form.Group className='person-creation_quote mb-2'>
+                    <Form.Group className='person-form_quote mb-2'>
                         <Form.Label>Цитата</Form.Label>
                         <Form.Control 
                             name='quote' 
@@ -112,8 +115,25 @@ const PersonForm = ({
                         </Form.Control.Feedback>
                     </Form.Group>
                     
-                    <Form.Group className='person-creation_photoUrl mb-2'>
-                        <Form.Label>Ссылка на изображение ветерана</Form.Label>
+                    <Form.Group className='person-form_photoUrl mb-2'>
+                        <Col className='d-flex justify-content-between align-items-center'>
+                            <Form.Label>Ссылка на изображение ветерана</Form.Label>
+
+                            <Button 
+                                className="person-form_image-preview-button" 
+                                variant='link' 
+                                onClick={() => setImagePreview(!imagePreview)}
+                            >
+                                {imagePreview ? "🔍" : "🔎"}
+                            </Button>
+                        </Col>  
+                        
+                        {imagePreview && 
+                            <div className='person-form_image-preview d-flex justify-content-center pb-2'>
+                                <Image className="person-form_image-preview_photo" src={values.photoUrl || DEFAULT_PHOTO_URL} rounded/>
+                            </div>
+                        }
+
                         <Form.Control 
                             name='photoUrl' 
                             value={values.photoUrl} 
@@ -121,12 +141,13 @@ const PersonForm = ({
                             isInvalid={touched.photoUrl && !!errors.photoUrl}
                             isValid={touched.photoUrl && !errors.photoUrl}
                         />
+                        
                         <Form.Control.Feedback type='invalid'>
                             {errors.photoUrl}
                         </Form.Control.Feedback>
                     </Form.Group>
                     
-                    <Form.Group className='person-creation_yearsOfBattle mb-2'>
+                    <Form.Group className='person-form_yearsOfBattle mb-2'>
                         <Form.Label>Годы войны</Form.Label>
                         <Form.Select
                             name='yearsOfBattle'
@@ -147,7 +168,7 @@ const PersonForm = ({
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Form.Group className='person-creation_dateOfBirth mb-2'>
+                    <Form.Group className='person-form_dateOfBirth mb-2'>
                         <Form.Label>Дата рождения ветерана</Form.Label>
                         <Form.Control 
                             type="date" 
@@ -162,7 +183,7 @@ const PersonForm = ({
                         </Form.Control.Feedback>
                     </Form.Group>
                     
-                    <Form.Group className='person-creation_dateOfDeath mb-3'>
+                    <Form.Group className='person-form_dateOfDeath mb-3'>
                         <Form.Label>Дата смерти ветерана</Form.Label>
                         <Form.Control 
                             type="date" 
@@ -201,7 +222,7 @@ const PersonForm = ({
     return (
         <div className='person_creation-form'>
             {asModal && 
-                <Modal show={show && !submited} className='person-creation-form_root text-white'>
+                <Modal show={show && !submited} className='person-form_root text-white'>
                     <Modal.Header className='text-center'>
                         <Modal.Title className='text-center'>
                             Регистрация ветерана

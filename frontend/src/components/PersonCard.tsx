@@ -116,12 +116,12 @@ const PersonCard = ({
         const [truncatedDescription, descriptionNeedsTruncate] = getTruncatedDescription(forModal)
 
         return (
-            <Card className='person-card_root text-white' bg='dark' onClick={() => setAsModal(true)}>
+            <Card className='person-card_root text-white' onClick={() => setAsModal(true)}>
                 <Ratio key={"1x1"} aspectRatio={"1x1"}>
                     <Card.Img 
                         variant="top" 
                         src={photoUrl || 'https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg'} 
-                        className='person-card_photoRation'
+                        className={`person-card_photoRation ${forModal && 'rounded'}`}
                     />
                 </Ratio>
 
@@ -133,7 +133,7 @@ const PersonCard = ({
                     </Card.Text>
 
                     <Card.Text className='person-card_years-of-battle'>
-                        {yearsOfBattle?.map(
+                        {yearsOfBattle?.sort().map(
                             (year: any) => (
                                 <Badge bg='secondary' className='mx-1' key={year}>
                                     {year}
@@ -188,7 +188,8 @@ const PersonCard = ({
             <Modal.Body>
                 {renderContent(true)}
             </Modal.Body>
-            <Modal.Footer>
+
+            <Modal.Footer className='person-block_modal-footer pt-0 mt-0'>
                 <Button variant='outline-danger' onClick={() => handleDelete()}>Удалить</Button>
             </Modal.Footer>
         </Modal>

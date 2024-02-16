@@ -8,6 +8,8 @@ services:
       - POSTGRES_DB=main
     volumes:
       - postgres_volume:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
 
   backend_service:
     build:
