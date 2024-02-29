@@ -1,4 +1,3 @@
-import random
 import typing
 import settings
 import operator
@@ -11,6 +10,7 @@ from sqlalchemy_utils import database_exists, create_database, drop_database
 
 DATABASE_CONNECTION_URL = settings.DATABASE_URL
 
+drop_database(DATABASE_CONNECTION_URL)
 if not database_exists(DATABASE_CONNECTION_URL):
     create_database(DATABASE_CONNECTION_URL)
 
@@ -50,9 +50,8 @@ class SqlAlchemyModel(DeclarativeBase):
 
     id = sqlalchemy.Column(
         sqlalchemy.BigInteger(),
-        primary_key=True,
-        autoincrement=True,
-        default=random.randint(0, 99999999999)
+        sqlalchemy.Identity(start=1, cycle=False),
+        primary_key=True
     )
 
     def __str__(self):
@@ -129,14 +128,15 @@ class SqlAlchemyModel(DeclarativeBase):
 
     @classmethod
     def create(cls, **kwargs):
+        if 'id' in kwargs:
+            kwargs.pop('id')
+
         query = session.execute(
             sqlalchemy.insert(cls).values(**kwargs)
         )
 
         session.commit()
-
-        row_id = query.last_inserted_params()['id']
-        return cls.fetch_one(id=row_id)
+        return cls.fetch_one(id=query.lastrowid + 1)
 
     @classmethod
     def delete(cls,  *filters: typing.Callable, **kwargs: [str, typing.Any]):
@@ -161,6 +161,10 @@ class SqlAlchemyModel(DeclarativeBase):
 
 
 class Veteran(SqlAlchemyModel):
+    """
+    Модель ветерана БД
+    """
+
     __tablename__ = 'veterans'
 
     first_name = sqlalchemy.Column(
@@ -215,6 +219,68 @@ class Veteran(SqlAlchemyModel):
         sqlalchemy.Date(),
         nullable=True,
         name='dateOfDeath'
+    )
+
+    created_by = sqlalchemy.Column(
+        sqlalchemy.ForeignKey(
+            column='users.id',
+            ondelete='CASCADE'
+        ),
+        nullable=True,
+        name='createdBy'
+    )
+
+
+class User(SqlAlchemyModel):
+    """
+    Модель пользователя БД
+    """
+
+    __tablename__ = 'users'
+
+    email = sqlalchemy.Column(
+        sqlalchemy.VARCHAR(255),
+        nullable=False,
+        name='email'
+    )
+
+    password_hash = sqlalchemy.Column(
+        sqlalchemy.VARCHAR(1000),
+        nullable=False,
+        name='passwordHash'
+    )
+
+    first_name = sqlalchemy.Column(
+        sqlalchemy.VARCHAR(50),
+        nullable=False,
+        name='firstName'
+    )
+
+    last_name = sqlalchemy.Column(
+        sqlalchemy.VARCHAR(50),
+        nullable=True,
+        name='lastName'
+    )
+
+    date_joined = sqlalchemy.Column(
+        sqlalchemy.DateTime(),
+        nullable=False,
+        default=datetime.now,
+        name='dateJoined'
+    )
+
+    date_password_changed = sqlalchemy.Column(
+        sqlalchemy.DateTime(),
+        nullable=True,
+        default=datetime.now,
+        name='datePasswordChanged'
+    )
+
+    email_verified = sqlalchemy.Column(
+        sqlalchemy.Boolean(),
+        nullable=False,
+        default=False,
+        name='emailVerified'
     )
 
 

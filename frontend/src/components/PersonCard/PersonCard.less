@@ -1,0 +1,29 @@
+@import "../../styles/Root";
+
+// .person-block_modal > .modal-dialog > .modal-content > .modal-header {
+//    border-color: @modal-border-color;
+//}
+
+// .person-block_modal > .modal-dialog > .modal-content > .modal-body > .person-card_root {
+
+.person-card_root {
+    height: 100%;
+    --bs-card-bg: @modal-background-color;
+}
+
+.person-block_modal {
+    --bs-modal-bg: @modal-background-color;
+
+    .person-card_root {
+        border-color: @modal-border-color;
+    }
+
+    .person-block_modal-footer {
+        border-color: @modal-border-color
+    }
+
+    .modal-header {
+        border-color: @modal-border-color
+    }
+
+}

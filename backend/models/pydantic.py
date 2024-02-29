@@ -116,6 +116,13 @@ class VeteranModel(PydanticModel):
         default=None
     )
 
+    created_by: Optional[int] = pydantic.Field(
+        description='Создатель ветерана',
+        serialization_alias='createdBy',
+        validation_alias=pydantic.AliasChoices('createdBy', 'created_by'),
+        default=None
+    )
+
     @pydantic.field_validator('date_of_birth')
     def validate_date_of_birth(cls, value: datetime):
         if value.timestamp() > datetime.now().timestamp():
@@ -136,10 +143,128 @@ class VeteranModel(PydanticModel):
 
 
 @as_form
+class EmailCheckModel(PydanticModel):
+    """
+    Модель для проверки почты на занятость
+    """
+
+    email: str = pydantic.Field(
+        description='Почта пользователя',
+        alias='email'
+    )
+
+
+@as_form
 class VeteranListModel(pydantic.RootModel):
     """
     Модель Pydantic для валидации списка ветеранов
     """
 
     root: list[VeteranModel]
+
+
+@as_form
+class UserLoginModel(PydanticModel):
+    """
+    Модель для авторизации пользователя
+    """
+
+    email: str = pydantic.Field(
+        description='Эл. почта пользователя'
+    )
+
+    password: str = pydantic.Field(
+        description='Пароль пользователя'
+    )
+
+
+@as_form
+class UserRegisterModel(PydanticModel):
+    """
+    Модель для регистрации пользователя
+    """
+
+    email: str = pydantic.Field(
+        description='Эл. почта пользователя',
+        serialization_alias='email',
+        validation_alias=pydantic.AliasChoices('email')
+    )
+
+    password: str = pydantic.Field(
+        description='Пароль пользователя',
+        serialization_alias='password',
+        validation_alias=pydantic.AliasChoices('password')
+    )
+
+    first_name: str = pydantic.Field(
+        description='Имя пользователя',
+        serialization_alias='firstName',
+        validation_alias=pydantic.AliasChoices('firstName', 'first_name')
+    )
+
+    last_name: str = pydantic.Field(
+        description='Фамилия пользователя',
+        default=None,
+        serialization_alias='lastName',
+        validation_alias=pydantic.AliasChoices('lastName', 'last_name')
+    )
+
+
+@as_form
+class UserModel(PydanticModel):
+    """
+        Модель для регистрации пользователя
+        """
+
+    id: Optional[int] = pydantic.Field(
+        description='ID пользователя',
+        serialization_alias='id',
+        validation_alias=pydantic.AliasChoices('id')
+    )
+
+    email: str = pydantic.Field(
+        description='Эл. почта пользователя',
+        serialization_alias='email',
+        validation_alias=pydantic.AliasChoices('email')
+    )
+
+    password_hash: str = pydantic.Field(
+        description='Хэш пароля пользователя',
+        serialization_alias='passwordHash',
+        validation_alias=pydantic.AliasChoices('passwordHash', 'password_hash')
+    )
+
+    first_name: str = pydantic.Field(
+        description='Имя пользователя',
+        serialization_alias='firstName',
+        validation_alias=pydantic.AliasChoices('firstName', 'first_name')
+    )
+
+    last_name: Optional[str] = pydantic.Field(
+        description='Фамилия пользователя',
+        default=None,
+        serialization_alias='lastName',
+        validation_alias=pydantic.AliasChoices('lastName', 'last_name')
+    )
+
+    date_joined: Optional[Union[datetime, str]] = pydantic.Field(
+        description='Дата регистрации пользователя',
+        default=None,
+        serialization_alias='dateJoined',
+        validation_alias=pydantic.AliasChoices('dateJoined', 'date_joined')
+    )
+
+    date_password_changed: Optional[Union[datetime, str]] = pydantic.Field(
+        description='Дата смены пароля пользователя',
+        default=None,
+        serialization_alias='datePasswordChanged',
+        validation_alias=pydantic.AliasChoices('datePasswordChanged', 'date_password_changed')
+    )
+
+    email_verified: Optional[bool] = pydantic.Field(
+        description='Почта пользователя подтверждена',
+        default=False,
+        serialization_alias='emailVerified',
+        validation_alias=pydantic.AliasChoices('emailVerified', 'email_verified')
+    )
 

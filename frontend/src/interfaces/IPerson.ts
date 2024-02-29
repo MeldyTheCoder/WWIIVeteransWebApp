@@ -2,7 +2,6 @@ import * as yup from 'yup';
 import { InferType } from 'yup';
 
 
-const nameIsInvalid = (name: string): boolean => (name?.length > 0 && name?.length <= 1)
 const urlIsInvalid = (url: string): boolean => (url?.length > 0 && (!url.startsWith('http') || url.length >= 1000))
 
 const getMinValue = (array?: any[]) => {

@@ -1,12 +1,20 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import IPerson from '../interfaces/IPerson';
-import { RequestMethods, HeadersType, ResponseData, DataType, wait } from './Types';
+import { RequestMethods, HeadersType, ResponseData, DataType, wait, AccessTokenResponse, GetTokenResponse } from './Types';
 
 
 class WWIIAPIBackend {
-    private baseUrl = process.env.REACT_APP_BACKEND_HOST || 'http://localhost:8080/'
-    private defaultHeaders = {}
+    private token: string | null | undefined
+    defaultHeaders: Record<string, string>
 
+    constructor(token?: string) {
+        this.token = token
+        this.defaultHeaders = {
+            'Authorization': `Bearer ${this.token}`
+        }
+    }
+
+    private baseUrl = process.env.REACT_APP_BACKEND_HOST || 'http://localhost:8080/'
 
     async getVeteransList(data?: DataType, headers?: HeadersType): ResponseData<IPerson[]> {
         const requestUrl: string = 'veterans/'
@@ -49,6 +57,71 @@ class WWIIAPIBackend {
         )
     }
 
+    async getToken(email: string, password: string, headers?: HeadersType) {
+        const requestUrl = 'users/token/'
+        const requestMethod: RequestMethods = RequestMethods.POST
+        const requestHeaders: HeadersType = {...this.defaultHeaders, ...headers}
+        const requestData = {email, password}
+
+        const response = await this.makeRequest<GetTokenResponse>(
+            requestUrl, 
+            requestMethod,
+            requestData,
+            requestHeaders
+        )
+
+        return response.data
+    }
+
+    async getMe(headers?: HeadersType) {
+        const requestUrl = 'users/me'
+        const requestMethod: RequestMethods = RequestMethods.GET
+        const requestHeaders: HeadersType = {...this.defaultHeaders, ...headers}
+        const requestData = {}
+
+        const response = await this.makeRequest<AccessTokenResponse>(
+            requestUrl, 
+            requestMethod,
+            requestData,
+            requestHeaders
+        )
+
+        return response.data
+    }
+
+    async registerUser(email: string, password: string, firstName: string, lastName?: string, headers?: HeadersType) {
+        const requestUrl = 'users/register/'
+        const requestMethod: RequestMethods = RequestMethods.POST
+        const requestHeaders: HeadersType = {...this.defaultHeaders, ...headers}
+        const requestData = {email, password, firstName, lastName}
+
+        const response = await this.makeRequest<AccessTokenResponse>(
+            requestUrl, 
+            requestMethod,
+            requestData,
+            requestHeaders
+        )
+
+        return response.data
+    }
+
+
+    async emailIsFree(email: string, headers?: HeadersType) {
+        const requestUrl = 'users/registration/email/check/'
+        const requestMethod: RequestMethods = RequestMethods.POST
+        const requestHeaders: HeadersType = {...this.defaultHeaders, ...headers}
+        const requestData = {'email': email}
+
+        const request = await this.makeRequest<Record<string, boolean>>(
+            requestUrl, 
+            requestMethod,
+            requestData,
+            requestHeaders
+        )
+
+        return request.data?.detail || false
+    }
+
     private async makeRequest<ResponseType>(url: string, method: RequestMethods, data?: DataType, headers?: HeadersType): ResponseData<ResponseType> {
         url = `${this.baseUrl}${url}`
 
@@ -60,7 +133,6 @@ class WWIIAPIBackend {
             timeout: 5000
         }
         
-        await wait(1000)
         return await axios(requestInitial)
     }
 }
